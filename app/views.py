@@ -11,11 +11,11 @@ from flask_appbuilder.views import MultipleView, SimpleFormView
 from flask_appbuilder.widgets import (
     FormVerticalWidget, ListBlock, ListWidget, ShowBlockWidget
 )
-
+from sqlalchemy import func
 from . import appbuilder, db
 from .forms import TestForm
 from .models import (
-    Contact, ContactGroup, FloatModel, Gender, Product, ProductManufacturer, ProductModel
+    Contact, ContactGroup, FloatModel, Gender, Product, ProductManufacturer, ProductModel,Seller
 )
 
 
@@ -56,6 +56,17 @@ class ProductManufacturerView(ModelView):
     datamodel = SQLAInterface(ProductManufacturer)
     related_views = [ProductModelView, ProductView]
 
+class SellerView(ModelView):
+    datamodel = SQLAInterface(Seller)
+    list_columns = ["name", "product_manufacturer", "product_model", "product"]
+    add_columns = ["name", "product_manufacturer", "product_model", "product"]
+    edit_columns = ["name", "product_manufacturer", "product_model", "product"]
+    default_view = 'out'
+
+    @expose('/out')
+    def out(self):
+        result = db.session.query(func.sum(Seller.id)).all()
+        return str(result)
 
 class MyListWidget(ListWidget):
     template = "widgets/list.html"
@@ -275,6 +286,9 @@ appbuilder.add_view(
 )
 appbuilder.add_view(
     ProductView, "List Products", icon="fa-envelope", category="Products"
+)
+appbuilder.add_view(
+    SellerView, "List Products", icon="fa-envelope", category="Seller"
 )
 appbuilder.add_link(
     "ContacModelView_lnk",

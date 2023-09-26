@@ -58,6 +58,25 @@ class Product(Model):
     def __repr__(self):
         return self.name
 
+class Seller(Model):
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True, nullable=False)
+    product_manufacturer_id = Column(
+        Integer, ForeignKey("product_manufacturer.id"), nullable=False
+    )
+    product_manufacturer = relationship("ProductManufacturer")
+    product_model_id = Column(Integer, ForeignKey("product_model.id"), nullable=False)
+    product_model = relationship("ProductModel")
+    product_id = Column(
+        Integer, ForeignKey("product.id"), nullable=False
+    )
+    product = relationship("Product")
+
+    def __repr__(self):
+        return self.name
+    @staticmethod
+    def suma():
+        return Seller.sum(id)
 
 class Gender(Model):
     id = Column(Integer, primary_key=True)
